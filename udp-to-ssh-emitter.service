@@ -4,7 +4,7 @@ After=network.target network-online.target
 Wants=network-online.target
 
 [Service]
-ExecStart=/usr/local/bin/ip-emitter.sh
+ExecStart=/usr/local/bin/udp-to-ssh-emitter.sh
 Restart=always
 RestartSec=10
 User=CUSTOM_USERNAME
