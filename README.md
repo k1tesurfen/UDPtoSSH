@@ -5,5 +5,5 @@ Auto connector to device in network
 ## Installation
 
 ```bash
-sudo bash ./install.sh
+bash install.sh
 ```
