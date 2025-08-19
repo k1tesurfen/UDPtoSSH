@@ -60,7 +60,7 @@ while true; do
 
   # Send the message as a UDP broadcast, suppressing errors
 
-  echo "Broadcasting message to $BROADCAST_IP..."
+  echo "Broadcasting message as user $SSH_USER to $BROADCAST_IP..."
 
   echo "$MESSAGE" | nc -u -w 1 -b "$BROADCAST_IP" "$UDP_PORT" 2>/dev/null
 
