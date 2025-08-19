@@ -11,6 +11,10 @@ SERVICE_NAME="udp-to-ssh-emitter.service"
 # This will now correctly capture your user because the script is not run with 'sudo'
 USER_NAME=$(whoami)
 
+# Dynamically get the name of the user executing the script
+# This will now correctly capture your user because the script is not run with 'sudo'
+USER_NAME=$(whoami)
+
 # --- Functions ---
 install_script() {
   echo "Installing $SCRIPT_FILE to $INSTALL_DIR_SCRIPT..."
@@ -21,10 +25,16 @@ install_script() {
     exit 1
   fi
 
-  # Move the script to the installation directory
-  sudo cp "$SCRIPT_FILE" "$INSTALL_DIR_SCRIPT"
+  # Read the script file content
+  SCRIPT_CONTENT=$(cat "$SCRIPT_FILE")
+
+  # Replace the 'whoami' command with the dynamic user name
+  UPDATED_SCRIPT_CONTENT=$(echo "$SCRIPT_CONTENT" | sed "s/SSH_USER=CUSTOM_USERNAME/SSH_USER=\"$USER_NAME\"/")
+
+  # Write the updated content to the script file in the correct location
+  echo "$UPDATED_SCRIPT_CONTENT" | sudo tee "$INSTALL_DIR_SCRIPT$SCRIPT_FILE" >/dev/null
   if [ $? -ne 0 ]; then
-    echo "Error: Failed to move $SCRIPT_FILE. Check permissions."
+    echo "Error: Failed to write updated script file. Check permissions."
     exit 1
   fi
 
@@ -46,7 +56,7 @@ install_service() {
   SERVICE_CONTENT=$(cat "$SERVICE_FILE")
 
   # Replace the placeholder username with the dynamic user name
-  UPDATED_SERVICE_CONTENT=$(echo "$SERVICE_CONTENT" | sed "s/User=YOUR_USERNAME_HERE/User=$USER_NAME/")
+  UPDATED_SERVICE_CONTENT=$(echo "$SERVICE_CONTENT" | sed "s/User=CUSTOM_USERNAME/User=$USER_NAME/")
 
   # Write the updated content to the service file in the correct location
   echo "$UPDATED_SERVICE_CONTENT" | sudo tee "$INSTALL_DIR_SERVICE$SERVICE_FILE" >/dev/null

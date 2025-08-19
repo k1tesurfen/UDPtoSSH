@@ -4,7 +4,7 @@
 # The message contains all necessary info for the receiver
 PI_IP=""
 PI_HOSTNAME=$(hostname)
-SSH_USER=$(whoami)
+SSH_USER=CUSTOM_USERNAME
 
 # Loop parameters
 MAX_WAIT_TIME_ON_STARTUP=120 # Total time to wait for network on boot
