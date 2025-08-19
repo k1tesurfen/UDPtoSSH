@@ -11,10 +11,6 @@ SERVICE_NAME="udp-to-ssh-emitter.service"
 # This will now correctly capture your user because the script is not run with 'sudo'
 USER_NAME=$(whoami)
 
-# Dynamically get the name of the user executing the script
-# This will now correctly capture your user because the script is not run with 'sudo'
-USER_NAME=$(whoami)
-
 # --- Functions ---
 install_script() {
   echo "Installing $SCRIPT_FILE to $INSTALL_DIR_SCRIPT..."
