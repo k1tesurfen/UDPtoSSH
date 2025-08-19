@@ -7,8 +7,13 @@ INSTALL_DIR_SCRIPT="/usr/local/bin/"
 INSTALL_DIR_SERVICE="/etc/systemd/system/"
 SERVICE_NAME="udp-to-ssh-emitter.service"
 
-# Dynamically get the name of the user executing the script
-USER_NAME=$(whoami)
+# Dynamically get the name of the original user who ran 'sudo'
+if [ -n "$SUDO_USER" ]; then
+  USER_NAME="$SUDO_USER"
+else
+  # Fallback to 'whoami' if not using sudo (e.g., for testing)
+  USER_NAME=$(whoami)
+fi
 
 # --- Functions ---
 install_script() {
@@ -45,8 +50,7 @@ install_service() {
   SERVICE_CONTENT=$(cat "$SERVICE_FILE")
 
   # Replace the placeholder username with the dynamic user name
-  # The placeholder is now 'YOUR_USERNAME_HERE' instead of a specific user.
-  UPDATED_SERVICE_CONTENT=$(echo "$SERVICE_CONTENT" | sed "s/User=CUSTOM_USERNAME/User=$USER_NAME/")
+  UPDATED_SERVICE_CONTENT=$(echo "$SERVICE_CONTENT" | sed "s/User=YOUR_USERNAME_HERE/User=$USER_NAME/")
 
   # Write the updated content to the service file in the correct location
   echo "$UPDATED_SERVICE_CONTENT" | sudo tee "$INSTALL_DIR_SERVICE$SERVICE_FILE" >/dev/null
