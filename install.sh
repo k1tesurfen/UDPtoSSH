@@ -7,13 +7,9 @@ INSTALL_DIR_SCRIPT="/usr/local/bin/"
 INSTALL_DIR_SERVICE="/etc/systemd/system/"
 SERVICE_NAME="udp-to-ssh-emitter.service"
 
-# Dynamically get the name of the original user who ran 'sudo'
-if [ -n "$SUDO_USER" ]; then
-  USER_NAME="$SUDO_USER"
-else
-  # Fallback to 'whoami' if not using sudo (e.g., for testing)
-  USER_NAME=$(whoami)
-fi
+# Dynamically get the name of the user executing the script
+# This will now correctly capture your user because the script is not run with 'sudo'
+USER_NAME=$(whoami)
 
 # --- Functions ---
 install_script() {
@@ -26,7 +22,7 @@ install_script() {
   fi
 
   # Move the script to the installation directory
-  sudo mv "$SCRIPT_FILE" "$INSTALL_DIR_SCRIPT"
+  sudo cp "$SCRIPT_FILE" "$INSTALL_DIR_SCRIPT"
   if [ $? -ne 0 ]; then
     echo "Error: Failed to move $SCRIPT_FILE. Check permissions."
     exit 1
@@ -82,6 +78,9 @@ enable_service() {
 
 # --- Main Execution ---
 echo "Starting IP Emitter installation..."
+
+# The script must now be run with 'bash install.sh' or './install.sh'
+# and the user will be prompted for their password for the sudo commands.
 
 # Install the script and service files
 install_script
